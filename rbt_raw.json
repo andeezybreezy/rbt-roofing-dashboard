@@ -1,0 +1,812 @@
+[
+  {
+    "PID": "R25-55",
+    "Project Name": "USPS White Plains Roofing Project MOD",
+    "Status": "Close Out",
+    "Site Address": "1000 Westchester Ave, White Plains, NY 10604",
+    "Roof System": "Duro-Last Pavers",
+    "Project Manager": "Maintenance Division",
+    "Field Supervisor": "",
+    "Roofing Subcontractor": ""
+  },
+  {
+    "PID": "R25-31",
+    "Project Name": "USPS Tulsa OK - Chimney Hills CAX - C",
+    "Status": "Close Out",
+    "Site Address": "9230 S. Sherdan Rd., Tulsa, OK 74133",
+    "Roof System": "DuroLast PVC",
+    "Project Manager": "Jacob Stephens",
+    "Field Supervisor": "Blake Howard",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R25-19",
+    "Project Name": "USPS St Louis MO - West County VMF - C",
+    "Status": "Close Out",
+    "Site Address": "10899 Indian Head Industrial Blvd., St. Louis, MO 63132",
+    "Roof System": "DuroLast PVC/SSMR",
+    "Project Manager": "James Rouse",
+    "Field Supervisor": "Zach Freeman",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R25-50",
+    "Project Name": "USPS Richmond TX MPO - C",
+    "Status": "Close Out",
+    "Site Address": "5560 FM 1640 RD., Richmond, TX 77469",
+    "Roof System": "DuroLast PVC",
+    "Project Manager": "Blake Clemons",
+    "Field Supervisor": "Joel Noreiga",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R24-52",
+    "Project Name": "USPS Reading PA Downtown Station",
+    "Status": "Close Out",
+    "Site Address": "59 North 5th Street, Reading, PA 19601",
+    "Roof System": "Carlisle EPDM",
+    "Project Manager": "Daniel Hanson",
+    "Field Supervisor": "Juan Garcia",
+    "Roofing Subcontractor": "Lorenzo Gonzales"
+  },
+  {
+    "PID": "R25-11",
+    "Project Name": "USPS Owensboro KY DDC - C",
+    "Status": "Close Out",
+    "Site Address": "54 Bon Hills Harbor Drive, Owensboro, KY 42301",
+    "Roof System": "Carlisle PVC",
+    "Project Manager": "Nick Crawford",
+    "Field Supervisor": "Juan Garcia",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R25-03",
+    "Project Name": "USPS Orange CA MPO - C",
+    "Status": "Close Out",
+    "Site Address": "1075 N Tustin St, Orange, CA 92863",
+    "Roof System": "PVC",
+    "Project Manager": "Nick Crawford",
+    "Field Supervisor": "Guy Provenzano",
+    "Roofing Subcontractor": "Andres"
+  },
+  {
+    "PID": "R25-04",
+    "Project Name": "USPS Mission KS Main Office",
+    "Status": "Close Out",
+    "Site Address": "6029 Broadmoor Street, Mission, KS 66202",
+    "Roof System": "Carlisle PVC",
+    "Project Manager": "Jacob Stephens",
+    "Field Supervisor": "Adam Parker",
+    "Roofing Subcontractor": "Lorenzo Gonzales"
+  },
+  {
+    "PID": "R25-23",
+    "Project Name": "USPS Memphis TN - Whitehaven Station - C",
+    "Status": "Close Out",
+    "Site Address": "1292 Gateway Drive, Memphis, TN 38116",
+    "Roof System": "DuroLast PVC",
+    "Project Manager": "James Rouse",
+    "Field Supervisor": "Juan Garcia",
+    "Roofing Subcontractor": "Lorenzo Gonzales"
+  },
+  {
+    "PID": "R24-56",
+    "Project Name": "USPS Madison, WI - Westside Station",
+    "Status": "Close Out",
+    "Site Address": "733 Struck Street, Madison, WI 53711",
+    "Roof System": "Carlisle EPDM",
+    "Project Manager": "Daniel Hanson",
+    "Field Supervisor": "Shane Harding",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R25-12",
+    "Project Name": "USPS Lewisburg WV MPO - R",
+    "Status": "Close Out",
+    "Site Address": "204 E. Washington St., Lewisburg, WV 24901",
+    "Roof System": "Carlisle PVC",
+    "Project Manager": "Blake Clemons",
+    "Field Supervisor": "Samuel Purifoy",
+    "Roofing Subcontractor": "Lorenzo Gonzales"
+  },
+  {
+    "PID": "R25-35",
+    "Project Name": "USPS Kaufman TX MPO - R",
+    "Status": "Close Out",
+    "Site Address": "2231 South Washington Street, Kaufman, TX 75412",
+    "Roof System": "GAF Shingles",
+    "Project Manager": "Justin Owens",
+    "Field Supervisor": "Zach Freeman",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R25-27",
+    "Project Name": "USPS Fort Plain NY - R",
+    "Status": "Close Out",
+    "Site Address": "41 River Street, Fort Plain, NY 13339",
+    "Roof System": "Carlisle EPDM",
+    "Project Manager": "Jacob Stephens",
+    "Field Supervisor": "Shane Harding",
+    "Roofing Subcontractor": "Lorenzo Gonzales"
+  },
+  {
+    "PID": "R23-21",
+    "Project Name": "USPS Duluth, MN P&DC",
+    "Status": "Close Out",
+    "Site Address": "2800 W. Michigan St. Duluth, MN 55806",
+    "Roof System": "Carlisle EPDM",
+    "Project Manager": "Logan Brooks",
+    "Field Supervisor": "Jose Angel",
+    "Roofing Subcontractor": "Lorenzo Gonzales"
+  },
+  {
+    "PID": "R25-29",
+    "Project Name": "USPS Beaumont, TX - P&DF",
+    "Status": "Close Out",
+    "Site Address": "5815 Walden RD, Beaumont, TX 77707",
+    "Roof System": "DuroLast PVC",
+    "Project Manager": "Jacob Stephens",
+    "Field Supervisor": "Adam Parker",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R25-10",
+    "Project Name": "USPS Albany GA MPO - C",
+    "Status": "Close Out",
+    "Site Address": "1501 S. Slappey BLVD, Albany, GA 31701",
+    "Roof System": "Duro-Last PVC",
+    "Project Manager": "Jacob Stephens",
+    "Field Supervisor": "Fernando Guadarrama",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R25-25",
+    "Project Name": "USPS Akron, OH VMF - C",
+    "Status": "Close Out",
+    "Site Address": "625 Wolf Ledges Parkway, Akron, OH 44309",
+    "Roof System": "JM EPDM",
+    "Project Manager": "Nick Crawford",
+    "Field Supervisor": "Joan Herrera",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R24-01",
+    "Project Name": "TISD CTE Additions",
+    "Status": "Close Out",
+    "Site Address": "4001 Summerhill Rd, Texarkana, TX 75503",
+    "Roof System": "Duro-Last PVC",
+    "Project Manager": "Justin Owens",
+    "Field Supervisor": "Project Manager Oversite",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R24-47",
+    "Project Name": "Root Elementary Fayetteville AR",
+    "Status": "Close Out",
+    "Site Address": "1529 E Mission Blvd, Fayetteville, AR 72701",
+    "Roof System": "GAF TPO",
+    "Project Manager": "Justin Owens",
+    "Field Supervisor": "Willy Solis",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R25-18",
+    "Project Name": "Rheem Manufacturing - Montgomery AL",
+    "Status": "Close Out",
+    "Site Address": "2600 Gunter Park Dr. E, Montgomery, AL 36109",
+    "Roof System": "Carlisle PVC",
+    "Project Manager": "Daniel Hanson",
+    "Field Supervisor": "Jose Angel",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R23-28",
+    "Project Name": "Red River Army Depot 593",
+    "Status": "Close Out",
+    "Site Address": "100 James Carlow Dr Bldg 593, Texarkana, Tx 75501",
+    "Roof System": "Carlisle TPO",
+    "Project Manager": "Logan Brooks",
+    "Field Supervisor": "Logan Pedron",
+    "Roofing Subcontractor": "Ernesto"
+  },
+  {
+    "PID": "R23-31",
+    "Project Name": "Pasadena ISD 2022 Bond Package 2",
+    "Status": "Close Out",
+    "Site Address": "1515 Cherrybrook, LN Pasadena, TX 77502",
+    "Roof System": "Carlisle TPO",
+    "Project Manager": "James Rouse",
+    "Field Supervisor": "Joel Noreiga",
+    "Roofing Subcontractor": "Lorenzo Gonzales & Luis Herrera"
+  },
+  {
+    "PID": "R25-33",
+    "Project Name": "Lumen Alma AR - R",
+    "Status": "Close Out",
+    "Site Address": "1801 Collum Ln West, Alma, AR 72921",
+    "Roof System": "JM PVC",
+    "Project Manager": "Maintenance Division",
+    "Field Supervisor": "Casey Leavitt",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R24-17",
+    "Project Name": "Lufkin Jail",
+    "Status": "Close Out",
+    "Site Address": "2311 E Lufkin Avenue, Lufkin, TX 75901",
+    "Roof System": "Garland",
+    "Project Manager": "James Rouse",
+    "Field Supervisor": "Lance Lovell",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R25-26",
+    "Project Name": "Graphic Packaging - Extruder 5 MCC",
+    "Status": "Close Out",
+    "Site Address": "9978 FM Rd 3129, Queen City, TX 75572",
+    "Roof System": "JM ModBit",
+    "Project Manager": "Maintenance Division",
+    "Field Supervisor": "Casey Leavitt",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R25-42",
+    "Project Name": "GPI Domino - Powerhouse Control Room",
+    "Status": "Close Out",
+    "Site Address": "9978 FM RD. 3129, Queen City, TX 75572",
+    "Roof System": "JM ModBit",
+    "Project Manager": "Maintenance Division",
+    "Field Supervisor": "",
+    "Roofing Subcontractor": ""
+  },
+  {
+    "PID": "R25-37",
+    "Project Name": "FSPS - Peak Innovation Center",
+    "Status": "Close Out",
+    "Site Address": "5900 Painter Ln., Fort Smith, AR 72903",
+    "Roof System": "DuroLast PVC",
+    "Project Manager": "Maintenance Division",
+    "Field Supervisor": "",
+    "Roofing Subcontractor": ""
+  },
+  {
+    "PID": "R24-49",
+    "Project Name": "FBC Moores Ln Expansion",
+    "Status": "Close Out",
+    "Site Address": "3015 Moores Ln, Texarkana, TX 75503",
+    "Roof System": "Carlisle TPO",
+    "Project Manager": "Cole Harris",
+    "Field Supervisor": "Project Manager Oversite",
+    "Roofing Subcontractor": "Fly"
+  },
+  {
+    "PID": "R23-14",
+    "Project Name": "FAA Honolulu, HI ATC Facility Roof",
+    "Status": "Close Out",
+    "Site Address": "760 Worchester Ave. Honolulu, HI 96818",
+    "Roof System": "Carlisle FB PVC / HPM SSMR",
+    "Project Manager": "Jose Diaz",
+    "Field Supervisor": "Rick Goddard",
+    "Roofing Subcontractor": "Lorenzo Gonzales"
+  },
+  {
+    "PID": "R25-07",
+    "Project Name": "Brightspeed Dothan AL",
+    "Status": "Close Out",
+    "Site Address": "206 West Troy Street, Dothan, AL 36303",
+    "Roof System": "American Weatherstar Coating",
+    "Project Manager": "James Rouse",
+    "Field Supervisor": "Fernando Guadarrama",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R25-22",
+    "Project Name": "Veolia Gum Springs AR",
+    "Status": "Demobilized",
+    "Site Address": "811 Hasley Road, Arkadelphia, Arkansas 71923",
+    "Roof System": "JM PVC",
+    "Project Manager": "Maintenance Division",
+    "Field Supervisor": "German Rosales",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R25-34",
+    "Project Name": "UT Tyler School of Nursing",
+    "Status": "Demobilized",
+    "Site Address": "3900 University Blvd. Tyler, TX 75799",
+    "Roof System": "JM ModBit",
+    "Project Manager": "Frank Allday",
+    "Field Supervisor": "Samuel Purifoy",
+    "Roofing Subcontractor": "Lorenzo Gonzales"
+  },
+  {
+    "PID": "R24-57",
+    "Project Name": "USPS Stilwell, OK - Main Office",
+    "Status": "Demobilized",
+    "Site Address": "16 S. 2nd Street, Stilwell, OK 74960",
+    "Roof System": "Carlisle // EPDM & PVC & Clay Tile",
+    "Project Manager": "Jacob Stephens",
+    "Field Supervisor": "Joan Herrera",
+    "Roofing Subcontractor": "Lorenzo Gonzales"
+  },
+  {
+    "PID": "R25-32",
+    "Project Name": "USPS Phoenix AZ - C",
+    "Status": "Demobilized",
+    "Site Address": "4949 E Van Buren St RM 65, Phoenix, AZ 85026",
+    "Roof System": "DuroLast PVC",
+    "Project Manager": "Blake Clemons",
+    "Field Supervisor": "Blake Howard",
+    "Roofing Subcontractor": "Lorenzo Gonzales"
+  },
+  {
+    "PID": "R25-16",
+    "Project Name": "USPS Chula Vista CA MPO - C",
+    "Status": "Demobilized",
+    "Site Address": "750 3rd Avenue, Chula Vista, CA 91910",
+    "Roof System": "Carlisle PVC",
+    "Project Manager": "Nick Crawford",
+    "Field Supervisor": "Fernando Guadarrama",
+    "Roofing Subcontractor": "Lorenzo Gonzales"
+  },
+  {
+    "PID": "R26-06",
+    "Project Name": "USPS Brady, TX Main Office - R",
+    "Status": "Demobilized",
+    "Site Address": "229 South Blackburn Street, Brady, TX 76825",
+    "Roof System": "DuroLast PVC",
+    "Project Manager": "Kevin Harris",
+    "Field Supervisor": "Juan Garcia",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R25-46",
+    "Project Name": "GPI Domino - PM Air Compressor",
+    "Status": "Demobilized",
+    "Site Address": "9978 FM Rd 3129, Queen City, TX 75572",
+    "Roof System": "JM ModBit",
+    "Project Manager": "Maintenance Division",
+    "Field Supervisor": "",
+    "Roofing Subcontractor": ""
+  },
+  {
+    "PID": "R25-51",
+    "Project Name": "USPS White Plains Mechanical Flashings",
+    "Status": "In Progress",
+    "Site Address": "1000 Worchester Ave., White Plains, NY 10610",
+    "Roof System": "DuroLast PVC",
+    "Project Manager": "Maintenance Division",
+    "Field Supervisor": "",
+    "Roofing Subcontractor": ""
+  },
+  {
+    "PID": "R25-48",
+    "Project Name": "USPS Portsmouth NH MPO Carrier Annex - C",
+    "Status": "In Progress",
+    "Site Address": "345 Heritage Avenue Unit 100, Portsmouth, NH 03801",
+    "Roof System": "DuroLast EPDM",
+    "Project Manager": "Nick Crawford",
+    "Field Supervisor": "Jose DeLeon & James Legate",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R25-59",
+    "Project Name": "USPS North Houston P&DC - C",
+    "Status": "In Progress",
+    "Site Address": "4600 Aldine Bender Rd, North Houston, TX 77315",
+    "Roof System": "DuroLast PVC",
+    "Project Manager": "Kevin Harris",
+    "Field Supervisor": "Fernando Guadarrama",
+    "Roofing Subcontractor": "Lorenzo Gonzales"
+  },
+  {
+    "PID": "R25-52",
+    "Project Name": "USPS New York, NY Manhattan P&DC - C",
+    "Status": "In Progress",
+    "Site Address": "341 9TH AVENUE RM 325 New York NY 10001",
+    "Roof System": "DuroLast PVC",
+    "Project Manager": "Cole Harris",
+    "Field Supervisor": "Shane Harding",
+    "Roofing Subcontractor": "Lorenzo Gonzales"
+  },
+  {
+    "PID": "R26-07",
+    "Project Name": "USPS Boca Raton, FL Carrier Annex - J",
+    "Status": "In Progress",
+    "Site Address": "2800 N. Military Trail Boca Raton, FL 33431",
+    "Roof System": "GAF PVC",
+    "Project Manager": "Garrett Durham",
+    "Field Supervisor": "Angel Martinez",
+    "Roofing Subcontractor": "Lorenzo Gonzales"
+  },
+  {
+    "PID": "R25-58",
+    "Project Name": "Texas High ISD- Main Campus & Math and Science Bldg",
+    "Status": "In Progress",
+    "Site Address": "4001 Summerhill Rod, Texarkana, TX 75503",
+    "Roof System": "DuroLast PVC",
+    "Project Manager": "Blake Clemons",
+    "Field Supervisor": "Juan Carlos DeLeon & Jason Nicolson",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R25-53",
+    "Project Name": "Texarkana Call Center",
+    "Status": "In Progress",
+    "Site Address": "5625 Summerhill Rd, Texarkana, TX 75503",
+    "Roof System": "JM TPO",
+    "Project Manager": "Garrett Durham",
+    "Field Supervisor": "Lance Lovell",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R26-04",
+    "Project Name": "TDCJ Stringfellow Unit - BOQ1732",
+    "Status": "In Progress",
+    "Site Address": "1200 FM 655, Rosharon, Texas 77583",
+    "Roof System": "DuroLast PVC",
+    "Project Manager": "James Rouse",
+    "Field Supervisor": "Aumier B Safargar & George Auglier",
+    "Roofing Subcontractor": "Tex-Martinze & TIAS"
+  },
+  {
+    "PID": "R23-12",
+    "Project Name": "Red River ARMY Depot 563 & 572",
+    "Status": "In Progress",
+    "Site Address": "100 James Carlow Dr Bldg 563 & 572, Texarkana, Tx 75501",
+    "Roof System": "Carlisle PVC",
+    "Project Manager": "Logan Brooks",
+    "Field Supervisor": "Jason Friday & Logan Pedron",
+    "Roofing Subcontractor": "Ernesto"
+  },
+  {
+    "PID": "R25-20",
+    "Project Name": "PSU - BP 2G",
+    "Status": "In Progress",
+    "Site Address": "201 Old Main, University Park, PA 16802",
+    "Roof System": "Derbigum Mod Bit",
+    "Project Manager": "Cole Harris",
+    "Field Supervisor": "Shannon Brussard",
+    "Roofing Subcontractor": "Lorenzo Gonzales"
+  },
+  {
+    "PID": "R25-39",
+    "Project Name": "NSA Mid-South Bldg 499 - Millington, TN",
+    "Status": "In Progress",
+    "Site Address": "Building 499, Fitness Center NSA Mid-South, Millinton, TN 38054",
+    "Roof System": "JM JM PVC",
+    "Project Manager": "James Rouse",
+    "Field Supervisor": "Adam Parker & James Legate",
+    "Roofing Subcontractor": "Tony Torres"
+  },
+  {
+    "PID": "R26-03",
+    "Project Name": "New Braunsfels ISD",
+    "Status": "In Progress",
+    "Site Address": "240 N Central Ave New Braunfels, TX 78130",
+    "Roof System": "Garland // ModBit & SSMR",
+    "Project Manager": "Kevin Harris",
+    "Field Supervisor": "Joan Herrera",
+    "Roofing Subcontractor": "Jody's Construction"
+  },
+  {
+    "PID": "R24-25",
+    "Project Name": "NAVFAC Coronado B94, B379, & B458",
+    "Status": "In Progress",
+    "Site Address": "Naval Air Station North Island, San Diego, CA 92135",
+    "Roof System": "Duro-Last PVC",
+    "Project Manager": "James Rouse",
+    "Field Supervisor": "Greg Schildmeyer & George Auglier",
+    "Roofing Subcontractor": "RMC Roofing"
+  },
+  {
+    "PID": "R25-56",
+    "Project Name": "Laredo TX Canopy Construction - Integriward",
+    "Status": "In Progress",
+    "Site Address": "Laredo West Bordewr Patrol Station 202 State Hwy 255 Laredo, Texas 78361",
+    "Roof System": "TexAr Metals Canopies",
+    "Project Manager": "Jacob Stephens",
+    "Field Supervisor": "Jarviar Wade",
+    "Roofing Subcontractor": "Code 8"
+  },
+  {
+    "PID": "R25-47",
+    "Project Name": "FCI Marion IL",
+    "Status": "In Progress",
+    "Site Address": "4500 Prison Rd., Marion, IL 62959",
+    "Roof System": "Carlisle / Varco Prudenn TPO / SSMR",
+    "Project Manager": "James Rouse",
+    "Field Supervisor": "Fernando Guadarrama",
+    "Roofing Subcontractor": "Metal Masters"
+  },
+  {
+    "PID": "R25-61",
+    "Project Name": "FCI Cumberland",
+    "Status": "In Progress",
+    "Site Address": "14601 Bubridge RD SE Cumberland, MD 21502",
+    "Roof System": "Carlisle TPO",
+    "Project Manager": "Blake Clemons",
+    "Field Supervisor": "Samual Purifoy",
+    "Roofing Subcontractor": "Cobcon"
+  },
+  {
+    "PID": "R25-57",
+    "Project Name": "FBOP USP Lee Pennington Gap, VA",
+    "Status": "In Progress",
+    "Site Address": "Hickory Flat Rd, Pennington Gap, VA 24277",
+    "Roof System": "Carlisle EPDM",
+    "Project Manager": "Jacob Stephens",
+    "Field Supervisor": "Blake Howard",
+    "Roofing Subcontractor": "Legacy Key LLC"
+  },
+  {
+    "PID": "R26-01",
+    "Project Name": "Collom and Carney Waterproofing - Garland",
+    "Status": "In Progress",
+    "Site Address": "2600 ST Michael DR, Texarkana, TX 75503",
+    "Roof System": "Garland Waterproofing",
+    "Project Manager": "Maintenance Division",
+    "Field Supervisor": "",
+    "Roofing Subcontractor": ""
+  },
+  {
+    "PID": "R25-28",
+    "Project Name": "City of Fort Worth - Moncrief & Burnett",
+    "Status": "In Progress",
+    "Site Address": "3401 W. Lancaster Ave., Fort Worth, TX 76107",
+    "Roof System": "JM & Western Colloid // Mod-Bit & Coating",
+    "Project Manager": "Frank Allday",
+    "Field Supervisor": "Juan Rodriguez",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R24-16",
+    "Project Name": "USPS Placida FL MPO",
+    "Status": "Postponed",
+    "Site Address": "8601 Placida Rd. Placida, FL 33946",
+    "Roof System": "PAC-CLAD Snap Lock SS",
+    "Project Manager": "Logan Brooks",
+    "Field Supervisor": "Daniel Najera",
+    "Roofing Subcontractor": "Metal Masters"
+  },
+  {
+    "PID": "R25-06",
+    "Project Name": "USPS Allen Park Detroit MI NDC - C",
+    "Status": "Postponed",
+    "Site Address": "17500 Oakwood BLVD, Allen Park, MI 48101",
+    "Roof System": "Carlisle EPDM",
+    "Project Manager": "Blake Clemons",
+    "Field Supervisor": "Lance Lovell",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R25-45",
+    "Project Name": "B6006 & B6008 Roof Siding Repairs, ERDC Vicksburg, MS",
+    "Status": "Postponed",
+    "Site Address": "3909 Halls Ferry Road, Vicksbug, MS 39180",
+    "Roof System": "DuroLast / Berridge Coating / R-Panel / PVC",
+    "Project Manager": "Ben Moore",
+    "Field Supervisor": "Logan Pedron",
+    "Roofing Subcontractor": "Metal Masters"
+  },
+  {
+    "PID": "R26-14",
+    "Project Name": "Westover AFB, MA - Hangar 9",
+    "Status": "Pre-Construction",
+    "Site Address": "250 Airlift Drive Westover Air Reserve Base Chicopee, MA 01022",
+    "Roof System": "Carlisle TPO",
+    "Project Manager": "Ben Moore",
+    "Field Supervisor": "",
+    "Roofing Subcontractor": ""
+  },
+  {
+    "PID": "R26-13",
+    "Project Name": "Westover AFB, MA - Hangar 3",
+    "Status": "Pre-Construction",
+    "Site Address": "250 Airlift Drive Westover Air Reserve Base Chicopee, MA 01022",
+    "Roof System": "Carlisle TPO",
+    "Project Manager": "Ben Moore",
+    "Field Supervisor": "Juan Carlos DeLeon",
+    "Roofing Subcontractor": ""
+  },
+  {
+    "PID": "R26-10",
+    "Project Name": "USPS Waxahachie, TX - R",
+    "Status": "Pre-Construction",
+    "Site Address": "316 N. College Street Waxahachie, TX 75165",
+    "Roof System": "DuroLast PVC",
+    "Project Manager": "Ty Blain",
+    "Field Supervisor": "Joel Noreiga",
+    "Roofing Subcontractor": "Lorenzo Gonzales"
+  },
+  {
+    "PID": "R26-11",
+    "Project Name": "USPS Rosenberg, TX - R",
+    "Status": "Pre-Construction",
+    "Site Address": "2103 Avenue G Rosenberg, TX 77471",
+    "Roof System": "GAF PVC",
+    "Project Manager": "Ben Moore",
+    "Field Supervisor": "Juan Rodriguez",
+    "Roofing Subcontractor": "Luis"
+  },
+  {
+    "PID": "R26-08",
+    "Project Name": "USPS Longview, TX - R",
+    "Status": "Pre-Construction",
+    "Site Address": "2336 South Mobberly AVE Longview, TX 75602",
+    "Roof System": "DuroLast PVC",
+    "Project Manager": "Maintenance Division",
+    "Field Supervisor": "",
+    "Roofing Subcontractor": ""
+  },
+  {
+    "PID": "R26-16",
+    "Project Name": "PGISD- Old Elementary",
+    "Status": "Pre-Construction",
+    "Site Address": "6500 Pleasant Grove Rd, Texarkana, TX 75503",
+    "Roof System": "DuroLast PVC",
+    "Project Manager": "Kevin Harris",
+    "Field Supervisor": "",
+    "Roofing Subcontractor": ""
+  },
+  {
+    "PID": "R26-09",
+    "Project Name": "NAVFAC NW PSNS B431 Section A3",
+    "Status": "Pre-Construction",
+    "Site Address": "1400 Farragut Ave, Bremerton, WA 98314",
+    "Roof System": "GAF PVC",
+    "Project Manager": "James Rouse",
+    "Field Supervisor": "Jason Friday",
+    "Roofing Subcontractor": "Tex-Martinez Roofing"
+  },
+  {
+    "PID": "R25-41",
+    "Project Name": "NAVFAC NASNI B-2, B-194, B-249",
+    "Status": "Pre-Construction",
+    "Site Address": "750 Pacific Highway, San Diego, CA 92132",
+    "Roof System": "DuroLast PVC",
+    "Project Manager": "James Rouse",
+    "Field Supervisor": "Greg Schildmeyer & Richard Silva",
+    "Roofing Subcontractor": "RMC Roofing"
+  },
+  {
+    "PID": "R25-49",
+    "Project Name": "NAS Pensacola FL 1771 - Core EnCon",
+    "Status": "Pre-Construction",
+    "Site Address": "Building 1771 NASP, Pensacola FL 32508",
+    "Roof System": "GAF ModBit",
+    "Project Manager": "Nick Crawford",
+    "Field Supervisor": "William Dotson",
+    "Roofing Subcontractor": "AF Porche"
+  },
+  {
+    "PID": "R25-54",
+    "Project Name": "Medical Examiners Building Cleveland, OH",
+    "Status": "Pre-Construction",
+    "Site Address": "11001 Cedar Ave, Cleveland, OH 44106",
+    "Roof System": "Garland ModBit",
+    "Project Manager": "Blake Clemons",
+    "Field Supervisor": "Rick Cooney",
+    "Roofing Subcontractor": "Summit Roofing"
+  },
+  {
+    "PID": "R25-62",
+    "Project Name": "Kirtland AFB Albuquerque NM - Edith Building 0001",
+    "Status": "Pre-Construction",
+    "Site Address": "3825 Edith Blvd NE, Albuquerque, NM 87107",
+    "Roof System": "Carlisle PVC",
+    "Project Manager": "Jacob Stephens",
+    "Field Supervisor": "Jason Friday",
+    "Roofing Subcontractor": "Concho"
+  },
+  {
+    "PID": "R25-60",
+    "Project Name": "Grizzell Middle School- OH",
+    "Status": "Pre-Construction",
+    "Site Address": "8705 Avery Road Dublin, Ohio 43017",
+    "Roof System": "DuroLast PVC",
+    "Project Manager": "Garrett Durham",
+    "Field Supervisor": "Daniel Najera",
+    "Roofing Subcontractor": "DCA Roofing"
+  },
+  {
+    "PID": "R24-43",
+    "Project Name": "Fort Sill Roof Repairs 912,1605,1606",
+    "Status": "Pre-Construction",
+    "Site Address": "912 Randolph Road, Lawton, OK 73503",
+    "Roof System": "Ludowici Clay Tiles",
+    "Project Manager": "Lane Henson",
+    "Field Supervisor": "Shannon Brussard",
+    "Roofing Subcontractor": "Vazquez Services"
+  },
+  {
+    "PID": "R24-44",
+    "Project Name": "Fort Sill Roof Repairs 1602,1614,1616,635",
+    "Status": "Pre-Construction",
+    "Site Address": "912 Randolph Road, Lawton, OK 73503",
+    "Roof System": "Ludowici Clay Tiles",
+    "Project Manager": "Cole Harris",
+    "Field Supervisor": "Willy Solis",
+    "Roofing Subcontractor": "Vazquez Services"
+  },
+  {
+    "PID": "R25-43",
+    "Project Name": "Fort Sill FY25 Package 7",
+    "Status": "Pre-Construction",
+    "Site Address": "Fort Sill Resident Office, Sheridan Road Bldg. 3503 Fort SIll, OK 73503",
+    "Roof System": "JM TPO",
+    "Project Manager": "Cole Harris",
+    "Field Supervisor": "Shannon Brussard",
+    "Roofing Subcontractor": "Vazquez Services"
+  },
+  {
+    "PID": "R25-44",
+    "Project Name": "Fort Sill FY25 Package 6",
+    "Status": "Pre-Construction",
+    "Site Address": "Fort Sill Resident Office, Sheridan Road Bldg. 3503 Fort SIll, OK 73503",
+    "Roof System": "Ludowici / Certainteed Shingle, TPO, French Tile",
+    "Project Manager": "Lane Henson",
+    "Field Supervisor": "Blake Howard",
+    "Roofing Subcontractor": "Vazquez Services"
+  },
+  {
+    "PID": "R25-40",
+    "Project Name": "Fort Sill FY25 Package 5",
+    "Status": "Pre-Construction",
+    "Site Address": "Fort Sill Resident Office, Sheridan Road Bldg. 3503 Fort SIll, OK 73503",
+    "Roof System": "Landmark / Ludowici / Vermont / JM Shingles/Clay Tile/Slate/TPO",
+    "Project Manager": "Cole Harris",
+    "Field Supervisor": "Willy Solis",
+    "Roofing Subcontractor": "Vazquez Services"
+  },
+  {
+    "PID": "R25-38",
+    "Project Name": "Fort Sill FY25 Package 4",
+    "Status": "Pre-Construction",
+    "Site Address": "Fort Sill Resident Office, Sheridan Road Bldg. 3503 Fort SIll, OK 73503",
+    "Roof System": "JM Shingles/TPO",
+    "Project Manager": "Lane Henson",
+    "Field Supervisor": "George Auglier",
+    "Roofing Subcontractor": "Vazquez Services"
+  },
+  {
+    "PID": "R26-12",
+    "Project Name": "DB Port Isabel Detention Center Building 37",
+    "Status": "Pre-Construction",
+    "Site Address": "27991 Buena Vista Blvd, Los Fresnos, TX 78566",
+    "Roof System": "Berridge SSMR",
+    "Project Manager": "Nick Crawford",
+    "Field Supervisor": "Logan Pedron",
+    "Roofing Subcontractor": ""
+  },
+  {
+    "PID": "R26-02",
+    "Project Name": "Daniel Wright Elementary School- Dublin, OH",
+    "Status": "Pre-Construction",
+    "Site Address": "2335 West Case Road Dublin, Ohio 43017",
+    "Roof System": "DuroLast / SRS PVC / Shingles",
+    "Project Manager": "Garrett Durham",
+    "Field Supervisor": "Angel Martinez",
+    "Roofing Subcontractor": "DCA Roofing"
+  },
+  {
+    "PID": "R26-15",
+    "Project Name": "BLDG 250 Roof Repair",
+    "Status": "Pre-Construction",
+    "Site Address": "106 RQW, 150 OLD RIVERHEAD RD, WESTHAMPTON BEACH, NY 11978",
+    "Roof System": "Gaco (Spectrum Paint) Coating",
+    "Project Manager": "Garrett Durham",
+    "Field Supervisor": "",
+    "Roofing Subcontractor": ""
+  },
+  {
+    "PID": "R26-05",
+    "Project Name": "Barksdale AFB 5454",
+    "Status": "Pre-Construction",
+    "Site Address": "Barksdale AFB, LA 71110",
+    "Roof System": "Sheffield SSMR",
+    "Project Manager": "Maintenance Division",
+    "Field Supervisor": "",
+    "Roofing Subcontractor": ""
+  }
+]
