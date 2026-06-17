@@ -404,6 +404,15 @@ function renderOverview(){
     {lbl:'Projected Cost vs Budget',val:`${netVar>=0?'+':'−'}${money(Math.abs(netVar))}`,unit:netVar>=0?'over budget':'under budget',risk:netVar>0,good:netVar<0},
     {lbl:'Billed to Date',val:money(billedYTD),unit:`(${Math.round(billedYTD/M.totalContract*100)}% of contract value)`},
   ];
+  // active-work health composition (mutually exclusive buckets, weighted by contract value)
+  const hbucket=p=>!p.onTrack?'behind':(p.projFinalCost>p.costBudget?'overbudget':'ontrack');
+  const healthMix=[
+    {k:'ontrack',label:'On Track',col:'#1a7a4f'},
+    {k:'overbudget',label:'Over Budget',col:'#b8860b'},
+    {k:'behind',label:'Behind',col:'#c8102e'},
+  ].map(s=>{const j=cur.filter(p=>hbucket(p)===s.k);return{...s,n:j.length,val:sum(j,p=>p.contractValue)};});
+  const revToDate=sum(cur,p=>p.earned);                  // revenue recognized to date on active jobs
+  const marginToDate=revToDate?(revToDate-sum(cur,p=>p.costToDate))/revToDate*100:0; // realized gross margin to date
 
   document.getElementById('view-overview').innerHTML=`
   <div class="confstrip" style="padding:18px 8px">${strip.map((s,i)=>`
@@ -412,6 +421,16 @@ function renderOverview(){
       <div style="font-size:var(--fs-sm);color:var(--muted);font-weight:var(--fw-normal);margin-top:4px"><span${s.risk?' style="color:var(--red)"':s.good?' style="color:var(--success)"':''}>${s.val}</span> ${s.unit}</div>
     </div>`).join('')}
   </div>
+
+  <div class="card" style="margin-bottom:20px"><div class="hd"><div><h3>Active Work Health</h3><div class="sub">${cur.length} active jobs · ${money(curValue)} contract value by status</div></div>
+    <div style="display:flex;gap:28px;text-align:right;flex:none">
+      <div><div style="font-size:var(--fs-sm);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:var(--fw-bold)">Revenue to Date</div><div class="num" style="font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--ink);margin-top:3px">${money(revToDate)}</div></div>
+      <div><div style="font-size:var(--fs-sm);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:var(--fw-bold)">Margin to Date</div><div class="num" style="font-size:var(--fs-base);font-weight:var(--fw-bold);margin-top:3px;color:${marginToDate>=TARGET_MARGIN?'var(--success)':marginToDate<0?'var(--red)':'var(--ink)'}">${marginToDate.toFixed(1)}%</div></div>
+    </div></div>
+    <div class="bd">
+      <div class="stackbar">${healthMix.filter(g=>g.val>0).map(g=>`<i data-w="${(g.val/(curValue||1)*100).toFixed(1)}%" style="width:0;background:${g.col}" title="${g.label}: ${g.n} jobs · ${money(g.val)}">${g.val/(curValue||1)>0.07?money(g.val):''}</i>`).join('')}</div>
+      <div class="stacklegend">${healthMix.map(g=>`<span><i style="background:${g.col}"></i>${g.label}<b>${g.n} · ${money(g.val)}</b></span>`).join('')}</div>
+    </div></div>
 
   <div class="grid2">
     <div class="card"><div class="hd"><div><h3>Behind Schedule</h3><div class="sub">${behind} current job${behind===1?'':'s'} behind pace</div></div></div>
