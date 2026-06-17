@@ -225,18 +225,6 @@ function enrich(p){
   p.crewSize=+p.crewSize; p.roofAreaSqft=+p.roofAreaSqft; p.marginTarget=+p.marginTarget;
   // Projects that haven't started yet cannot have any progress
   if(new Date(p.startDate+'T00:00') > AS_OF_DATE){ p.pctComplete = 0; p.costToDate = 0; }
-  // Simulated schedule slippage: a deterministic minority of active jobs fall behind pace
-  // (source dates are generated on-pace, so without this nothing ever reads as behind).
-  if(p.status==='In Production'||p.status==='Substantial Completion'){
-    const sl=hashStr('slip'+(p.pid||p.name))%100;
-    if(sl<24){
-      const start=new Date(p.startDate+'T00:00'), end=new Date(p.endDate+'T00:00');
-      const dur=Math.max(20,(end-start)/864e5);
-      const cut=sl<8?0.30+(sl%6)*0.03:0.16+(sl%8)*0.012;   // worst ~8% compress hardest (some go past due)
-      end.setDate(end.getDate()-Math.round(dur*cut));
-      p.endDate=end.toISOString().slice(0,10);
-    }
-  }
   p.daysRemaining = Math.round((new Date(p.endDate+'T00:00')-AS_OF_DATE)/864e5);
   const gll=geocode(p.address,p.state,hashStr(p.pid||p.name)); p.lat=gll[0]; p.lng=gll[1];
   p.manufacturer = canonMfg(p.manufacturer || (p.roofSystem||'').split(' ')[0]);
@@ -246,14 +234,6 @@ function enrich(p){
   p.overUnder = p.billed - p.earned;
   p.retainage = p.billed*RETAINAGE_PCT;
   p.costBudget = p.contractValue*(1-p.marginTarget/100);
-  // Simulated cost-to-date that tracks the budget at the current % complete, with a deterministic
-  // cost-performance factor (most jobs near budget, ~1/4 over, a few bleeding). Keeps Proj. Final
-  // and Proj. Margin coherent with Budget instead of ballooning on every job.
-  if(p.pctComplete>0 && p.status!=='Pre-Construction'){
-    const cs=hashStr('cost'+(p.pid||p.name))%100;
-    const variance = cs<6 ? 1.25+cs*0.03 : cs<26 ? 1.05+(cs-6)*0.007 : 0.84+(cs-26)*0.0022;
-    p.costToDate = Math.round(p.costBudget*variance*(p.pctComplete/100)/100)*100;
-  }
   p.projFinalCost = p.pctComplete>5 ? p.costToDate/(p.pctComplete/100) : p.costBudget;
   p.projMargin = (p.contractValue - p.projFinalCost)/p.contractValue*100;
   const active = p.status==='In Production'||p.status==='Substantial Completion';
@@ -305,7 +285,7 @@ function getAttention(){
     let risk=0,type,ic2,warn=false,note;
     if(p.status==='On Hold'){ risk=p.contractValue*(1-p.pctComplete/100); type='post'; ic2='hardhat'; note='On hold · '+(p.city||p.state); }
     else if((p.status==='In Production'||p.status==='Substantial Completion')&&!p.onTrack){ risk=p.contractValue*(1-p.pctComplete/100)*0.12; ic2='clock'; warn=true; note='Behind schedule · '+p.pctComplete+'% complete'; }
-    else if(p.projFinalCost>p.costBudget && p.projMargin < p.marginTarget-5){ risk=Math.max(0,(p.marginTarget-p.projMargin)/100*p.contractValue); ic2='trenddown'; note='Margin erosion · '+p.projMargin.toFixed(1)+'% proj ('+p.marginTarget+'% target)'; }
+    else if((p.status==='In Production'||p.status==='Substantial Completion') && p.projFinalCost>p.costBudget && p.projMargin < p.marginTarget-5){ risk=Math.max(0,(p.marginTarget-p.projMargin)/100*p.contractValue); ic2='trenddown'; note='Margin erosion · '+p.projMargin.toFixed(1)+'% proj ('+p.marginTarget+'% target)'; }
     if(risk>0&&ic2) out.push({p,risk,ic:ic2,warn,note});
   });
   return out.sort((a,b)=>b.risk-a.risk);
