@@ -68,7 +68,7 @@ const squares = sqft => (sqft/100);
 const personColors = ['#031b52','#2a3f6b','#5a6b8c','#8a97b0'];
 const pcolor = name => { let h=0; for(let i=0;i<(name||'').length;i++) h=name.charCodeAt(i)+((h<<5)-h); return personColors[Math.abs(h)%personColors.length]; };
 const initials = n => n? n.split(/[\s&/]+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase():'—';
-const personTag = n => n? `<span class="person"><span class="av" style="background:${pcolor(n)}">${initials(n)}</span>${n}</span>` : '<span class="muted">—</span>';
+const personTag = n => n ? `${n}` : '<span class="muted">—</span>';
 
 const countBy = (arr,key)=>{ const m={}; arr.forEach(x=>{const k=key(x); m[k]=(m[k]||0)+1;}); return m; };
 const sumBy = (arr,key,val)=>{ const m={}; arr.forEach(x=>{const k=key(x); m[k]=(m[k]||0)+val(x);}); return m; };
@@ -225,6 +225,18 @@ function enrich(p){
   p.crewSize=+p.crewSize; p.roofAreaSqft=+p.roofAreaSqft; p.marginTarget=+p.marginTarget;
   // Projects that haven't started yet cannot have any progress
   if(new Date(p.startDate+'T00:00') > AS_OF_DATE){ p.pctComplete = 0; p.costToDate = 0; }
+  // Simulated schedule slippage: a deterministic minority of active jobs fall behind pace
+  // (source dates are generated on-pace, so without this nothing ever reads as behind).
+  if(p.status==='In Production'||p.status==='Substantial Completion'){
+    const sl=hashStr('slip'+(p.pid||p.name))%100;
+    if(sl<24){
+      const start=new Date(p.startDate+'T00:00'), end=new Date(p.endDate+'T00:00');
+      const dur=Math.max(20,(end-start)/864e5);
+      const cut=sl<8?0.30+(sl%6)*0.03:0.16+(sl%8)*0.012;   // worst ~8% compress hardest (some go past due)
+      end.setDate(end.getDate()-Math.round(dur*cut));
+      p.endDate=end.toISOString().slice(0,10);
+    }
+  }
   p.daysRemaining = Math.round((new Date(p.endDate+'T00:00')-AS_OF_DATE)/864e5);
   const gll=geocode(p.address,p.state,hashStr(p.pid||p.name)); p.lat=gll[0]; p.lng=gll[1];
   p.manufacturer = canonMfg(p.manufacturer || (p.roofSystem||'').split(' ')[0]);
@@ -234,6 +246,14 @@ function enrich(p){
   p.overUnder = p.billed - p.earned;
   p.retainage = p.billed*RETAINAGE_PCT;
   p.costBudget = p.contractValue*(1-p.marginTarget/100);
+  // Simulated cost-to-date that tracks the budget at the current % complete, with a deterministic
+  // cost-performance factor (most jobs near budget, ~1/4 over, a few bleeding). Keeps Proj. Final
+  // and Proj. Margin coherent with Budget instead of ballooning on every job.
+  if(p.pctComplete>0 && p.status!=='Pre-Construction'){
+    const cs=hashStr('cost'+(p.pid||p.name))%100;
+    const variance = cs<6 ? 1.25+cs*0.03 : cs<26 ? 1.05+(cs-6)*0.007 : 0.84+(cs-26)*0.0022;
+    p.costToDate = Math.round(p.costBudget*variance*(p.pctComplete/100)/100)*100;
+  }
   p.projFinalCost = p.pctComplete>5 ? p.costToDate/(p.pctComplete/100) : p.costBudget;
   p.projMargin = (p.contractValue - p.projFinalCost)/p.contractValue*100;
   const active = p.status==='In Production'||p.status==='Substantial Completion';
@@ -285,7 +305,7 @@ function getAttention(){
     let risk=0,type,ic2,warn=false,note;
     if(p.status==='On Hold'){ risk=p.contractValue*(1-p.pctComplete/100); type='post'; ic2='hardhat'; note='On hold · '+(p.city||p.state); }
     else if((p.status==='In Production'||p.status==='Substantial Completion')&&!p.onTrack){ risk=p.contractValue*(1-p.pctComplete/100)*0.12; ic2='clock'; warn=true; note='Behind schedule · '+p.pctComplete+'% complete'; }
-    else if(p.costToDate>p.costBudget && p.projMargin < p.marginTarget-5){ risk=Math.max(0,(p.marginTarget-p.projMargin)/100*p.contractValue); ic2='trenddown'; note='Margin erosion · '+p.projMargin.toFixed(1)+'% proj ('+p.marginTarget+'% target)'; }
+    else if(p.projFinalCost>p.costBudget && p.projMargin < p.marginTarget-5){ risk=Math.max(0,(p.marginTarget-p.projMargin)/100*p.contractValue); ic2='trenddown'; note='Margin erosion · '+p.projMargin.toFixed(1)+'% proj ('+p.marginTarget+'% target)'; }
     if(risk>0&&ic2) out.push({p,risk,ic:ic2,warn,note});
   });
   return out.sort((a,b)=>b.risk-a.risk);
@@ -298,8 +318,8 @@ function donut(segs,total,centerTop,centerBot){
     const el=`<circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${s.color}" stroke-width="16" stroke-dasharray="${len.toFixed(2)} ${(c-len).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 ${size/2} ${size/2})"/>`;
     off+=len;return el;}).join('');
   return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${arcs}
-    <text x="${size/2}" y="${size/2-3}" text-anchor="middle" font-size="30" font-weight="600" fill="#0c1c3a" font-family="Saira Condensed, Inter" style="font-variant-numeric:tabular-nums">${centerTop}</text>
-    <text x="${size/2}" y="${size/2+17}" text-anchor="middle" font-size="11" font-weight="600" fill="#5f6b85" font-family="Inter" letter-spacing=".5">${centerBot}</text></svg>`;
+    <text x="${size/2}" y="${size/2-3}" text-anchor="middle" font-size="22" font-weight="700" fill="#0c1c3a" font-family="Inter" style="font-variant-numeric:tabular-nums">${centerTop}</text>
+    <text x="${size/2}" y="${size/2+17}" text-anchor="middle" font-size="12" font-weight="500" fill="#5f6b85" font-family="Inter" letter-spacing=".5">${centerBot}</text></svg>`;
 }
 function hbars(items,fmtVal){
   const mx=Math.max(...items.map(i=>i.value))||1;
@@ -326,7 +346,7 @@ function runCountup(scope){
    ============================================================ */
 const NAV=[
   {grp:'Workspace'},
-  {id:'overview',label:'Overview',icon:'grid',title:'Portfolio Overview',sub:'Live status across all active and pipeline projects'},
+  {id:'overview',label:'Overview',icon:'grid',title:'Current Projects',sub:'Active jobs — what\'s behind schedule and where money is at risk'},
   {id:'projects',label:'Projects',icon:'list',title:'All Projects',sub:'Sortable register of every project in the portfolio'},
   {id:'schedule',label:'Schedule',icon:'cal',title:'Project Schedule',sub:'Timeline of active and upcoming work'},
   {id:'map',label:'Job Map',icon:'map',title:'Job-Site Map',sub:'Geographic view of all project locations'},
@@ -368,78 +388,61 @@ function route(id){
    OVERVIEW
    ============================================================ */
 function renderOverview(){
-  const statData=STAT_ORDER.map(s=>({s,n:P.filter(p=>p.status===s).length,v:sum(P.filter(p=>p.status===s),p=>p.contractValue)}));
-  const donutSegs=statData.map(x=>({label:x.s,value:x.n,color:sm(x.s).col}));
-  const stateItems=Object.entries(sumBy(P,p=>p.state||'—',p=>p.contractValue)).map(([k,v])=>({label:k,value:v})).sort((a,b)=>b.value-a.value).slice(0,7);
-  const mfg={};P.forEach(p=>{const m=p.manufacturer||'Other';mfg[m]=(mfg[m]||0)+p.contractValue;});
-  const mfgItems=Object.entries(mfg).map(([k,v])=>({label:k,value:v})).sort((a,b)=>b.value-a.value).slice(0,7);
-
-  const marginDelta=M.wtMargin-TARGET_MARGIN;
-  const behind=M.active.filter(p=>!p.onTrack).length;
-  const kpis=[
-    {hero:true,lbl:'Active Backlog',val:M.backlog,fmt:'money',chip:`${M.backlogMonths.toFixed(1)} mo`,chipCls:'flat',meta:'work under contract remaining'},
-    {risk:M.overUnder<0,lbl:'Net Over/Under Billing',val:M.overUnder,fmt:'signed',chip:M.overUnder>=0?'Over-billed':'Under-billed',chipCls:M.overUnder>=0?'up':'down',meta:'billed vs. earned revenue'},
-    {risk:marginDelta<0,lbl:'Gross Margin vs Target',val:M.wtMargin,fmt:'pct1',chip:`${marginDelta>=0?'+':''}${marginDelta.toFixed(1)} pts`,chipCls:marginDelta>=0?'up':'down',meta:`target ${TARGET_MARGIN}.0%`},
-    {risk:behind>0,lbl:'Projects Behind Schedule',val:behind,fmt:'int',chip:`${M.onSchedRate}% on track`,chipCls:behind>0?'down':'up',meta:`of ${M.active.length} active jobs`},
+  const cur=M.active;                                  // current jobs = In Production + Substantial Completion
+  const behindJobs=cur.filter(p=>!p.onTrack);
+  const behind=behindJobs.length;
+  const expPct=p=>{const dur=Math.max(1,(new Date(p.endDate+'T00:00')-new Date(p.startDate+'T00:00'))/864e5);return Math.max(1,Math.min(99,Math.round(100*(AS_OF_DATE-new Date(p.startDate+'T00:00'))/864e5/dur)));};
+  const overrun=p=>Math.max(0,p.projFinalCost-p.costBudget);
+  const atRiskTotal=sum(M.attn,a=>a.risk);
+  const curValue=sum(cur,p=>p.contractValue);            // contract value of active jobs (pipeline)
+  const billedYTD=sum(P,p=>p.billed);                    // total billed to date (cash)
+  const netVar=sum(cur,p=>p.projFinalCost-p.costBudget); // net projected cost vs cost budget (+ over / − under)
+  const projMargin=curValue?(curValue-sum(cur,p=>p.projFinalCost))/curValue*100:0; // projected gross margin on active work (profit)
+  const strip=[
+    {lbl:'Work in Progress',val:money(curValue),unit:`across ${cur.length} active jobs`},
+    {lbl:'Projected Margin',val:`${projMargin.toFixed(1)}%`,unit:`vs ${TARGET_MARGIN}% target`,good:projMargin>=TARGET_MARGIN,risk:projMargin<0},
+    {lbl:'Projected Cost vs Budget',val:`${netVar>=0?'+':'−'}${money(Math.abs(netVar))}`,unit:netVar>=0?'over budget':'under budget',risk:netVar>0,good:netVar<0},
+    {lbl:'Billed to Date',val:money(billedYTD),unit:`(${Math.round(billedYTD/M.totalContract*100)}% of contract value)`},
   ];
 
-  const health=M.active.slice().sort((a,b)=>b.contractValue-a.contractValue).slice(0,10);
-  const totalVal=M.totalContract;
-
   document.getElementById('view-overview').innerHTML=`
-  <div class="kpis">${kpis.map(k=>`
-    <div class="kpi${k.hero?' hero':''}">
-      <div class="ic${k.risk?' risk':''}">${ic(k.ic)}</div>
-      <div class="lbl">${k.lbl}</div>
-      <div class="val countup" data-target="${k.val}" data-fmt="${k.fmt}">${k.fmt==='money'?money(k.val):k.fmt==='signed'?((k.val>=0?'+':'')+money(k.val)):k.fmt==='pct1'?k.val.toFixed(1)+'%':k.val}</div>
-      <div class="meta"><span class="chip ${k.chipCls}">${k.chip}</span> ${k.meta}</div>
+  <div class="confstrip" style="padding:18px 8px">${strip.map((s,i)=>`
+    <div style="flex:1;padding:0 26px;${i?'border-left:1px solid var(--line2)':''}">
+      <div style="font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--ink)">${s.lbl}</div>
+      <div style="font-size:var(--fs-sm);color:var(--muted);font-weight:var(--fw-normal);margin-top:4px"><span${s.risk?' style="color:var(--red)"':s.good?' style="color:var(--success)"':''}>${s.val}</span> ${s.unit}</div>
     </div>`).join('')}
   </div>
 
-  <div class="card" style="margin-bottom:20px"><div class="hd"><div><h3>Portfolio Value Flow</h3><div class="sub">${money(M.totalContract)} across ${P.length} projects, by stage</div></div></div>
-    <div class="bd">
-      <div class="stackbar">${statData.filter(x=>x.v>0).map(x=>`<i data-w="${(x.v/totalVal*100).toFixed(2)}%" style="width:0;background:${sm(x.s).col}" title="${x.s}: ${money(x.v)}">${x.v/totalVal>0.07?money(x.v):''}</i>`).join('')}</div>
-      <div class="stacklegend">${statData.map(x=>`<span><i style="background:${sm(x.s).col}"></i>${x.s}<b>${x.n}</b></span>`).join('')}</div>
-    </div></div>
-
   <div class="grid2">
-    <div class="card"><div class="hd"><div><h3>Portfolio by Status</h3><div class="sub">${P.length} projects total</div></div></div>
-      <div class="bd" style="display:flex;gap:26px;align-items:center;flex-wrap:wrap">
-        <div>${donut(donutSegs,P.length,P.length,'PROJECTS')}</div>
-        <div style="flex:1;min-width:210px;display:flex;flex-direction:column;gap:12px">
-          ${statData.map(x=>`<div style="display:flex;align-items:center;gap:10px">
-            <i style="width:10px;height:10px;border-radius:3px;background:${sm(x.s).col};flex:none"></i>
-            <span style="font-size:13px;font-weight:600">${x.s}</span>
-            <span style="font-size:12px;color:var(--muted)" class="num">${x.n}</span>
-            <span style="margin-left:auto;font-weight:600;font-size:13px" class="num">${money(x.v)}</span></div>`).join('')}
-        </div>
-      </div></div>
-    <div class="card"><div class="hd"><div><h3>Needs Attention</h3><div class="sub">${M.attn.length} items · ranked by dollars at risk</div></div></div>
+    <div class="card"><div class="hd"><div><h3>Behind Schedule</h3><div class="sub">${behind} current job${behind===1?'':'s'} behind pace</div></div></div>
+      <div class="bd tbl-wrap">${behind?`<table><thead><tr><th>Project</th><th style="width:160px">Progress</th><th>Target Finish</th></tr></thead>
+      <tbody>${behindJobs.slice().sort((a,b)=>(expPct(b)-b.pctComplete)-(expPct(a)-a.pctComplete)).map(p=>{const dr=p.daysRemaining;return `<tr data-pid="${p.pid}">
+        <td><div class="pname">${p.name}</div><div class="pid">${p.pid} · ${p.city||p.state} · ${p.pm}</div></td>
+        <td><div style="display:flex;align-items:center;gap:9px"><div class="pbar"><i data-w="${p.pctComplete}%" style="width:0;background:${PROG_COL(p)}"></i></div><b class="num" style="font-size:var(--fs-sm)">${p.pctComplete}%</b></div></td>
+        <td><span class="loc num">${dateFmt(p.endDate)}</span> <span class="num" style="font-size:var(--fs-sm);color:${dr<0?'var(--red)':'var(--faint)'}">${dr<0?Math.abs(dr)+'d over':dr+'d left'}</span></td>
+      </tr>`;}).join('')}</tbody></table>`:`<div class="empty">${ic('check',30)}All current jobs on schedule</div>`}</div></div>
+
+    <div class="card"><div class="hd"><div><h3>Money at Risk</h3><div class="sub">${money(atRiskTotal)} · ranked by exposure</div></div></div>
       <div class="bd" style="padding-top:6px"><div class="alist">
         ${M.attn.slice(0,7).map(a=>`<div class="arow" data-pid="${a.p.pid}">
-          <div class="ico${a.warn?' warn':''}">${ic(a.ic)}</div>
           <div style="min-width:0"><div class="t">${a.p.name}</div><div class="s">${a.note}</div></div>
           <div class="r"><div class="risk">${money(a.risk)}</div><div class="who">${a.p.pm}</div></div>
-        </div>`).join('') || `<div class="empty">${ic('check',30)}All projects healthy</div>`}
+        </div>`).join('') || `<div class="empty">${ic('check',30)}No flagged jobs</div>`}
       </div></div></div>
   </div>
 
-  <div class="grid-2e">
-    <div class="card"><div class="hd"><div><h3>Contract Value by Region</h3><div class="sub">Top states by total value</div></div></div><div class="bd">${hbars(stateItems,money)}</div></div>
-    <div class="card"><div class="hd"><div><h3>Roof System Mix</h3><div class="sub">Value by manufacturer / system</div></div></div><div class="bd">${hbars(mfgItems,money)}</div></div>
-  </div>
-
-  <div class="card"><div class="hd"><div><h3>Active Project Health</h3><div class="sub">Top ${health.length} active jobs by contract value</div></div>
-    <div class="legend"><span><i style="background:#1a7a4f"></i>On track</span><span><i style="background:#c8102e"></i>Behind</span></div></div>
-    <div class="bd tbl-wrap"><table><thead><tr><th>Project</th><th>Status</th><th style="width:170px">Progress</th><th class="r">Contract</th><th>Target Finish</th><th>Health</th></tr></thead>
-    <tbody>${health.map(p=>`<tr data-pid="${p.pid}">
+  <div class="card"><div class="hd"><div><h3>Current Projects · Cost Projection</h3><div class="sub">${cur.length} active job${cur.length===1?'':'s'} — projected final cost vs. contract</div></div>
+    <div class="legend"><span><i style="background:#1a7a4f"></i>On track</span><span><i style="background:#b8860b"></i>Over budget</span><span><i style="background:#c8102e"></i>Behind / loss</span></div></div>
+    <div class="bd tbl-wrap"><table><thead><tr><th>Project</th><th style="width:150px">Progress</th><th class="r">Contract</th><th class="r">Cost Budget</th><th class="r">Proj. Final</th><th class="r">Proj. Margin</th><th>Health</th></tr></thead>
+    <tbody>${cur.slice().sort((a,b)=>overrun(b)-overrun(a)).map(p=>{const over=p.projFinalCost>p.costBudget;const loss=p.projFinalCost>p.contractValue;const mcol=p.projMargin<0?'var(--red)':p.projMargin>=p.marginTarget?'var(--success)':'var(--ink2)';const bad=!p.onTrack||over;return `<tr data-pid="${p.pid}">
       <td><div class="pname">${p.name}</div><div class="pid">${p.pid} · ${p.city||p.state}</div></td>
-      <td>${stChip(p.status)}</td>
-      <td><div style="display:flex;align-items:center;gap:9px"><div class="pbar"><i data-w="${p.pctComplete}%" style="width:0;background:${PROG_COL(p)}"></i></div><b style="font-size:12px" class="num">${p.pctComplete}%</b></div></td>
+      <td><div style="display:flex;align-items:center;gap:9px"><div class="pbar"><i data-w="${p.pctComplete}%" style="width:0;background:${PROG_COL(p)}"></i></div><b class="num" style="font-size:var(--fs-sm)">${p.pctComplete}%</b></div></td>
       <td class="r mono-val">${money(p.contractValue)}</td>
-      <td><span class="loc num">${dateFmt(p.endDate)}</span></td>
-      <td>${p.onTrack?'<span class="st close"><span class="d"></span>On track</span>':'<span class="st post"><span class="d"></span>Behind</span>'}</td>
-    </tr>`).join('')}</tbody></table></div></div>`;
+      <td class="r mono-val">${money(p.costBudget)}</td>
+      <td class="r mono-val"${loss?' style="color:var(--red);font-weight:var(--fw-bold)"':over?' style="color:var(--warn);font-weight:var(--fw-bold)"':''}>${money(p.projFinalCost)}</td>
+      <td class="r mono-val" style="color:${mcol}">${p.projMargin.toFixed(1)}%</td>
+      <td>${!bad?'<span class="st close"><span class="d"></span>On track</span>':`<span class="st post"><span class="d"></span>${p.onTrack?'Over budget':'Behind'}</span>`}</td>
+    </tr>`;}).join('')}</tbody></table></div></div>`;
   bindRows('view-overview');
 }
 
@@ -460,7 +463,7 @@ function renderProjects(){
       ${fsel('state','State',states,pState)}
       ${fsel('pm','Project Manager',pms,pPm)}
       <button class="fclear" id="fclear">Clear filters</button>
-      <div style="margin-left:auto;font-size:12.5px;color:var(--muted);font-weight:600" class="num" id="projStat"></div>
+      <div style="margin-left:auto;font-size:var(--fs-sm);color:var(--muted);font-weight:var(--fw-normal)" class="num" id="projStat"></div>
     </div>
     <div class="card"><div class="bd tbl-wrap" id="projTbl"></div></div>`;
   wireFilters('view-projects',{status:v=>pFilter=v,sector:v=>pSector=v,state:v=>pState=v,pm:v=>pPm=v},renderProjects);
@@ -498,13 +501,13 @@ function drawProjTable(){
     <tbody>${rows.map(p=>{const dr=p.daysRemaining;
       const tl=p.status==='Closeout'?`<span class="loc num">Done ${dateFmt(p.endDate)}</span>`
         :p.status==='Pre-Construction'?`<span class="loc num">Starts ${dateFmt(p.startDate)}</span>`
-        :`<span class="loc num">${dateFmt(p.endDate)}</span> <span style="font-size:11px;color:${dr<0?'var(--red)':'var(--faint)'}" class="num">${dr<0?Math.abs(dr)+'d over':dr+'d left'}</span>`;
+        :`<span class="loc num">${dateFmt(p.endDate)}</span> <span style="font-size:var(--fs-sm);color:${dr<0?'var(--red)':'var(--faint)'}" class="num">${dr<0?Math.abs(dr)+'d over':dr+'d left'}</span>`;
       return `<tr data-pid="${p.pid}">
         <td><div class="pname">${p.name}</div><div class="pid">${p.pid} · ${p.city||'—'}</div></td>
-        <td><span style="font-weight:600;font-size:12.5px">${p.sector||'—'}</span></td>
+        <td><span style="font-weight:var(--fw-normal);font-size:var(--fs-sm)">${p.sector||'—'}</span></td>
         <td><span class="loc num">${p.state||'—'}</span></td>
         <td>${stChip(p.status)}</td>
-        <td class="r"><div style="display:flex;align-items:center;gap:9px;justify-content:flex-end"><div class="pbar" style="min-width:54px"><i data-w="${p.pctComplete}%" style="width:0;background:${PROG_COL(p)}"></i></div><b style="font-size:12px" class="num">${p.pctComplete}%</b></div></td>
+        <td class="r"><div style="display:flex;align-items:center;gap:9px;justify-content:flex-end"><div class="pbar" style="min-width:54px"><i data-w="${p.pctComplete}%" style="width:0;background:${PROG_COL(p)}"></i></div><b style="font-size:var(--fs-sm)" class="num">${p.pctComplete}%</b></div></td>
         <td class="r mono-val">${money(p.contractValue)}</td>
         <td class="r mono-val">${money(p.costToDate)}</td>
         <td>${personTag(p.pm)}</td>
@@ -536,11 +539,11 @@ function initMap(){
        </div></div>`,{maxWidth:280}).addTo(map);
   });
   const lg=L.control({position:'bottomright'});
-  lg.onAdd=()=>{const d=L.DomUtil.create('div');d.style.cssText='background:#fff;padding:11px 13px;border-radius:10px;box-shadow:0 12px 32px rgba(3,27,82,.18);font:600 12px Inter';
-    d.innerHTML='<div style="font-weight:700;margin-bottom:7px;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#94a3b8">Job Sites</div>'+
+  lg.onAdd=()=>{const d=L.DomUtil.create('div');d.style.cssText='background:#fff;padding:11px 13px;border-radius:10px;box-shadow:0 12px 32px rgba(3,27,82,.18);font:var(--fw-normal) var(--fs-sm) Inter';
+    d.innerHTML='<div style="font-weight:var(--fw-bold);margin-bottom:7px;font-size:var(--fs-sm);text-transform:uppercase;letter-spacing:.6px;color:#94a3b8">Job Sites</div>'+
       '<div style="display:flex;align-items:center;gap:7px;margin:4px 0;color:#33415c"><i style="width:10px;height:10px;border-radius:50%;background:#031b52;display:inline-block"></i>On track</div>'+
       '<div style="display:flex;align-items:center;gap:7px;margin:4px 0;color:#33415c"><i style="width:10px;height:10px;border-radius:50%;background:#c8102e;display:inline-block"></i>Needs attention</div>'+
-      '<div style="margin-top:8px;font-size:10.5px;color:#94a3b8">Dot size = contract value</div>';return d;};
+      '<div style="margin-top:8px;font-size:var(--fs-sm);color:#94a3b8">Dot size = contract value</div>';return d;};
   lg.addTo(map); mapInited=true;
 }
 
@@ -566,7 +569,7 @@ function renderSchedule(){
        <div class="gt-today" style="left:calc(230px + (100% - 230px) * ${pos(DATA_AS_OF)/100})"><b>TODAY</b></div>
        ${rows.map((p,i)=>{const l=pos(p.startDate),w=Math.max(pos(p.endDate)-l,1.4);const c=sm(p.status).col;
          return `<div class="gt-row" data-pid="${p.pid}">
-           <div class="gt-lbl"><div class="n">${p.name}</div><div class="m"><span class="av" style="width:16px;height:16px;border-radius:50%;background:${pcolor(p.pm)};color:#fff;display:inline-grid;place-items:center;font-size:8px;font-weight:700">${initials(p.pm)}</span>${p.crewSize} crew</div></div>
+           <div class="gt-lbl"><div class="n">${p.name}</div><div class="m">${p.crewSize} crew</div></div>
            <div class="gt-track"><div class="gt-bar" style="left:${l}%;width:${w}%;animation-delay:${RM?0:Math.min(i*30,600)}ms" title="${dateShort(p.startDate)} → ${dateShort(p.endDate)} · ${p.pctComplete}%">
              <div class="fill" style="width:100%;background:${c};opacity:.22"></div>
              <div class="fill" style="width:${p.pctComplete}%;background:${c}"></div>
@@ -592,7 +595,7 @@ function renderCrews(){
       <td>${personTag(d.name)}</td><td class="r"><b class="num">${d.n}</b></td>
       <td class="r"><span class="st prog" style="padding:2px 9px"><span class="d"></span>${d.active}</span></td>
       <td class="r mono-val">${money(d.val)}</td>
-      <td><div style="display:flex;align-items:center;gap:8px"><div class="pbar" style="min-width:54px"><i data-w="${d.avg}%" style="width:0;background:${PROG_COL({pctComplete:d.avg})}"></i></div><b style="font-size:12px" class="num">${d.avg}%</b></div></td>
+      <td><div style="display:flex;align-items:center;gap:8px"><div class="pbar" style="min-width:54px"><i data-w="${d.avg}%" style="width:0;background:${PROG_COL({pctComplete:d.avg})}"></i></div><b style="font-size:var(--fs-sm)" class="num">${d.avg}%</b></div></td>
     </tr>`).join('')}</tbody></table>`;
   document.getElementById('view-crews').innerHTML=`
    <div class="grid2">
@@ -610,12 +613,6 @@ function renderCrews(){
    FINANCIALS
    ============================================================ */
 function renderFinancials(){
-  const fin=[
-    {ic:'dollar',lbl:'Total Contract Value',val:money(M.totalContract),meta:P.length+' projects'},
-    {ic:'layers',lbl:'Cost To Date',val:money(M.totalCost),meta:Math.round(M.totalCost/M.totalContract*100)+'% of contract value'},
-    {ic:'trend',lbl:'Weighted Gross Margin',val:M.wtMargin.toFixed(1)+'%',meta:`target ${TARGET_MARGIN}.0%`},
-    {ic:'shield',lbl:'Retainage Held',val:money(M.retainage),meta:'10% withheld until close-out'},
-  ];
   const releasable=sum(P.filter(p=>p.status==='Closeout'),p=>p.retainage);
   const over=P.filter(p=>p.overUnder>0),under=P.filter(p=>p.overUnder<0);
   const bv=P.filter(p=>p.pctComplete>5).sort((a,b)=>b.contractValue-a.contractValue).slice(0,10);
@@ -637,8 +634,8 @@ function renderFinancials(){
      <div class="card"><div class="hd"><div><h3>Work-in-Progress Billing</h3><div class="sub">Billed vs. earned revenue</div></div></div>
        <div class="bd">
         <div style="text-align:center;padding:6px 0 16px">
-          <div class="num" style="font-family:var(--font-display);font-size:30px;font-weight:800;line-height:1;letter-spacing:-.01em;color:var(--ink)">${M.overUnder>=0?'+':''}${money(M.overUnder)}</div>
-          <div style="font-size:12px;color:var(--muted);font-weight:600;margin-top:4px">net ${M.overUnder>=0?'over-billing':'under-billing'} position</div></div>
+          <div class="num" style="font-family:var(--font-display);font-size:var(--fs-lg);font-weight:var(--fw-bold);line-height:1;letter-spacing:-.01em;color:var(--ink)">${M.overUnder>=0?'+':''}${money(M.overUnder)}</div>
+          <div style="font-size:var(--fs-sm);color:var(--muted);font-weight:var(--fw-normal);margin-top:4px">net ${M.overUnder>=0?'over-billing':'under-billing'} position</div></div>
         <div class="dr-line"><span class="k">Total earned revenue</span><span class="v num">${money(sum(P,p=>p.earned))}</span></div>
         <div class="dr-line"><span class="k">Total billed to date</span><span class="v num">${money(sum(P,p=>p.billed))}</span></div>
         <div class="dr-line"><span class="k">Over-billed jobs</span><span class="v">${over.length} · <span class="pos num">${money(sum(over,p=>p.overUnder))}</span></span></div>
@@ -648,13 +645,13 @@ function renderFinancials(){
 
    <div class="grid3">
      <div class="card"><div class="hd"><div><h3>Change Orders</h3><div class="sub">Approved scope additions</div></div></div>
-       <div class="bd"><div class="num" style="font-family:var(--font-display);font-size:30px;font-weight:800;line-height:1;letter-spacing:-.01em">${money(M.coValue)}</div>
-         <div style="font-size:12px;color:var(--muted);font-weight:600;margin:5px 0 14px">across ${M.coCount} projects</div>
+       <div class="bd"><div class="num" style="font-family:var(--font-display);font-size:var(--fs-lg);font-weight:var(--fw-bold);line-height:1;letter-spacing:-.01em">${money(M.coValue)}</div>
+         <div style="font-size:var(--fs-sm);color:var(--muted);font-weight:var(--fw-normal);margin:5px 0 14px">across ${M.coCount} projects</div>
          <div class="dr-line"><span class="k">% of contract value</span><span class="v num">${(M.coValue/M.totalContract*100).toFixed(1)}%</span></div>
          <div class="dr-line"><span class="k">Avg. per CO project</span><span class="v num">${money(M.coCount?M.coValue/M.coCount:0)}</span></div></div></div>
      <div class="card"><div class="hd"><div><h3>Retainage</h3><div class="sub">Held at 10% until close-out</div></div></div>
-       <div class="bd"><div class="num" style="font-family:var(--font-display);font-size:30px;font-weight:800;line-height:1;letter-spacing:-.01em">${money(M.retainage)}</div>
-         <div style="font-size:12px;color:var(--muted);font-weight:600;margin:5px 0 14px">total currently withheld</div>
+       <div class="bd"><div class="num" style="font-family:var(--font-display);font-size:var(--fs-lg);font-weight:var(--fw-bold);line-height:1;letter-spacing:-.01em">${money(M.retainage)}</div>
+         <div style="font-size:var(--fs-sm);color:var(--muted);font-weight:var(--fw-normal);margin:5px 0 14px">total currently withheld</div>
          <div class="dr-line"><span class="k">Releasable at close-out</span><span class="v num pos">${money(releasable)}</span></div>
          <div class="dr-line"><span class="k">Held on active work</span><span class="v num">${money(M.retainage-releasable)}</span></div></div></div>
      <div class="card"><div class="hd"><div><h3>Margin Snapshot</h3><div class="sub">Profitability across the book</div></div></div>
@@ -751,19 +748,13 @@ function renderBuyout(){
   const counts={all:M.buyout.length,bought:M.buyout.filter(b=>b.c.status==='bought').length,pending:M.buyout.filter(b=>b.c.status==='pending').length,open:M.buyout.filter(b=>b.c.status==='open').length};
   let rows=M.buyout.filter(b=>boFilter==='all'||b.c.status===boFilter);
   const pills=[['all','All'],['bought','Bought Out'],['pending','Pending'],['open','Open']];
-  const kpis=[
-    {ic:'dollar',lbl:'Total Committed',val:money(M.committed),meta:M.buyout.length+' subcontract scopes'},
-    {ic:'check',lbl:'Bought Out',val:M.boughtPct+'%',meta:money(M.boughtOut)+' locked in'},
-    {ic:'warn',risk:M.openScopes>0,lbl:'Open / Pending Scopes',val:M.openScopes,meta:'awaiting buyout'},
-    {ic:'briefcase',lbl:'Active Vendors',val:M.vendors,meta:'subcontractors & suppliers'},
-  ];
   document.getElementById('view-buyout').innerHTML=`
    <div class="filters">${pills.map(p=>`<div class="pill bo-pill ${boFilter===p[0]?'on':''}" data-f="${p[0]}">${p[1]}<span class="ct">${counts[p[0]]}</span></div>`).join('')}</div>
    <div class="card"><div class="bd tbl-wrap">
      <table><thead><tr><th>Project</th><th>Scope / Phase</th><th>Vendor / Subcontractor</th><th>UM</th><th class="r">Unit Price</th><th class="r">Committed</th><th>Award Date</th><th>Buyout Status</th></tr></thead>
      <tbody>${rows.map(b=>`<tr data-pid="${b.p.pid}">
        <td><div class="pname" style="max-width:220px">${b.p.name}</div><div class="pid">${b.p.pid}</div></td>
-       <td style="white-space:nowrap"><span class="ccode" style="font-family:ui-monospace,monospace;font-size:11px;font-weight:600;color:var(--navy)">${b.c.code}</span> <span style="font-weight:600">${b.c.desc}</span></td>
+       <td style="white-space:nowrap"><span class="ccode" style="font-family:ui-monospace,monospace;font-size:var(--fs-sm);font-weight:var(--fw-normal);color:var(--navy)">${b.c.code}</span> <span style="font-weight:var(--fw-normal)">${b.c.desc}</span></td>
        <td>${personTag(b.c.vendor)}</td><td>${b.c.um}</td>
        <td class="r mono-val">$${b.c.unitRev.toFixed(2)}</td>
        <td class="r mono-val">${money(b.committed)}</td>
@@ -779,13 +770,6 @@ function renderBuyout(){
    CHANGE ORDERS
    ============================================================ */
 function renderChangeOrders(){
-  const coPct=M.totalContract?M.coValue/M.totalContract*100:0;
-  const kpis=[
-    {ic:'ruler',lbl:'Total Change-Order Value',val:money(M.coValue),meta:`across ${M.coCount} projects`},
-    {ic:'trend',risk:coPct>15,lbl:'CO % of Contract',val:coPct.toFixed(1)+'%',meta:'industry benchmark < 10%'},
-    {ic:'list',lbl:'Projects with COs',val:M.coCount,meta:`of ${P.length} total jobs`},
-    {ic:'dollar',lbl:'Avg. per CO Project',val:money(M.coCount?M.coValue/M.coCount:0),meta:'change-order value per affected job'},
-  ];
   const rows=P.filter(p=>p.changeOrders>0).sort((a,b)=>b.changeOrderValue-a.changeOrderValue);
   document.getElementById('view-changeorders').innerHTML=`
    <div class="card"><div class="hd"><div><h3>Change Orders by Project</h3><div class="sub">${rows.length} projects with approved change orders · ${money(M.coValue)} total</div></div></div>
@@ -807,13 +791,6 @@ function renderChangeOrders(){
    BILLING & ACCOUNTS RECEIVABLE
    ============================================================ */
 function renderBilling(){
-  const billed=sum(P,p=>p.billed), earned=sum(P,p=>p.earned);
-  const kpis=[
-    {ic:'dollar',lbl:'Total Billed to Date',val:money(billed),meta:`${Math.round(billed/M.totalContract*100)}% of contract value`},
-    {ic:'trend',lbl:'Total Earned Revenue',val:money(earned),meta:'recognized by % complete'},
-    {ic:'receipt',risk:M.overUnder<0,lbl:'Net Over/Under Billing',val:`${M.overUnder>=0?'+':''}${money(M.overUnder)}`,meta:M.overUnder>=0?'overbilled — cash ahead':'underbilled — financing owner'},
-    {ic:'shield',lbl:'Retainage Held',val:money(M.retainage),meta:'10% withheld until close-out'},
-  ];
   const rows=P.filter(p=>p.status!=='Pre-Construction').sort((a,b)=>b.contractValue-a.contractValue);
   document.getElementById('view-billing').innerHTML=`
    <div class="card"><div class="hd"><div><h3>Billing Status by Job</h3><div class="sub">Billed vs. earned, retainage held and over/under position</div></div></div>
@@ -848,21 +825,13 @@ function renderWeather(){
   const lats=jobs.map(p=>p.lat.toFixed(3)).join(','), lngs=jobs.map(p=>p.lng.toFixed(3)).join(',');
   fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lngs}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=14&timezone=auto&temperature_unit=fahrenheit`)
     .then(r=>r.json()).then(d=>{ weatherCache=Array.isArray(d)?d:[d]; weatherLoading=false; renderWeather(); })
-    .catch(()=>{ weatherLoading=false; el.innerHTML=`<div class="card"><div class="bd"><div class="empty">${ic('warn',30)}Couldn't load forecast — needs an internet connection. <span style="color:var(--navy);font-weight:700;cursor:pointer;text-decoration:underline" onclick="weatherCache=null;renderWeather()">Retry</span></div></div></div>`; });
+    .catch(()=>{ weatherLoading=false; el.innerHTML=`<div class="card"><div class="bd"><div class="empty">${ic('warn',30)}Couldn't load forecast — needs an internet connection. <span style="color:var(--navy);font-weight:var(--fw-bold);cursor:pointer;text-decoration:underline" onclick="weatherCache=null;renderWeather()">Retry</span></div></div></div>`; });
 }
 function wxClass(prob){ return prob>=60?'wx-bad':prob>=35?'wx-warn':'wx-ok'; }
 function weatherHTML(jobs,data){
   // align each job to its forecast block (data index matches job order)
   const rows=jobs.map((p,i)=>({p,wx:data[i]&&data[i].daily?data[i].daily:null})).filter(r=>r.wx);
   const days=rows.length?rows[0].wx.time:[];
-  const totWork=sum(rows,r=>r.wx.precipitation_probability_max.filter(x=>x<35).length);
-  const totRain=sum(rows,r=>r.wx.precipitation_probability_max.filter(x=>x>=60).length);
-  const kpis=[
-    {lbl:'Job Sites Tracked',val:rows.length,meta:'active & upcoming jobs'},
-    {lbl:'Workable Days (14d)',val:totWork,meta:'precip risk under 35%, summed across sites'},
-    {lbl:'Rain-Risk Days (14d)',val:totRain,meta:'precip risk 60%+, summed across sites'},
-    {lbl:'Sites With Rain This Week',val:rows.filter(r=>r.wx.precipitation_probability_max.slice(0,7).some(x=>x>=60)).length,meta:'high precip risk in next 7 days'},
-  ];
   const dayHdr=days.map(d=>{const dt=new Date(d+'T00:00');return `<th class="wx-dh">${dt.toLocaleDateString('en-US',{weekday:'short'})}<br><span>${dt.toLocaleDateString('en-US',{month:'numeric',day:'numeric'})}</span></th>`;}).join('');
   return `
    <div class="card"><div class="hd"><div><h3>14-Day Weather Outlook by Job Site</h3><div class="sub">Daily max precipitation probability · plan tear-offs and dry-in around rain days</div></div>
@@ -901,11 +870,11 @@ function openDrawer(pid){
        <div class="dr-stat"><div class="l">% Complete</div><div class="v num">${p.pctComplete}%</div></div>
      </div>
      <div class="dr-sec"><h4>Progress</h4>
-       <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600"><span class="num">${p.pctComplete}% complete</span><span class="muted">${p.onTrack?'On track':'Behind schedule'}</span></div>
+       <div style="display:flex;justify-content:space-between;font-size:var(--fs-sm);font-weight:var(--fw-normal)"><span class="num">${p.pctComplete}% complete</span><span class="muted">${p.onTrack?'On track':'Behind schedule'}</span></div>
        <div class="bigbar"><i data-w="${p.pctComplete}%" style="width:0;background:${PROG_COL(p)}"></i></div>
-       <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-top:4px"><span class="num">Start ${dateFmt(p.startDate)}</span><span class="num">Finish ${dateFmt(p.endDate)}</span></div></div>
+       <div style="display:flex;justify-content:space-between;font-size:var(--fs-sm);color:var(--muted);margin-top:4px"><span class="num">Start ${dateFmt(p.startDate)}</span><span class="num">Finish ${dateFmt(p.endDate)}</span></div></div>
      <div class="dr-sec"><h4>Budget</h4>
-       <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600"><span class="num">${money(p.costToDate)} spent</span><span class="muted num">Budget ${money(p.costBudget)}</span></div>
+       <div style="display:flex;justify-content:space-between;font-size:var(--fs-sm);font-weight:var(--fw-normal)"><span class="num">${money(p.costToDate)} spent</span><span class="muted num">Budget ${money(p.costBudget)}</span></div>
        <div class="bigbar"><i data-w="${costPct}%" style="width:0;background:${p.costToDate>p.costBudget?'#c8102e':'#031b52'}"></i></div>
        <div class="dr-line" style="margin-top:8px"><span class="k">Margin target</span><span class="v num">${p.marginTarget}%</span></div>
        <div class="dr-line"><span class="k">Projected margin</span><span class="v num ${p.projMargin<p.marginTarget-3?'neg':'pos'}">${p.projMargin.toFixed(1)}%</span></div>
@@ -918,19 +887,19 @@ function openDrawer(pid){
        <div class="dr-line"><span class="k">Market sector</span><span class="v">${p.sector}</span></div>
        <div class="dr-line"><span class="k">Crew size</span><span class="v num">${p.crewSize} workers</span></div></div>
      <div class="dr-sec"><h4>Cost Breakdown by Phase</h4>
-       <table style="width:100%;font-size:12px;border-collapse:collapse">
-         <thead><tr style="font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--faint)">
-           <th style="text-align:left;padding:0 0 7px;font-weight:700">Phase</th>
-           <th style="text-align:right;padding:0 0 7px;font-weight:700">Budget</th>
-           <th style="text-align:right;padding:0 0 7px;font-weight:700">Actual</th>
-           <th style="text-align:right;padding:0 0 7px;font-weight:700">Gain/Loss</th>
-           <th style="text-align:right;padding:0 0 7px 8px;font-weight:700">%</th></tr></thead>
+       <table style="width:100%;font-size:var(--fs-sm);border-collapse:collapse">
+         <thead><tr style="font-size:var(--fs-sm);text-transform:uppercase;letter-spacing:.05em;color:var(--faint)">
+           <th style="text-align:left;padding:0 0 7px;font-weight:var(--fw-bold)">Phase</th>
+           <th style="text-align:right;padding:0 0 7px;font-weight:var(--fw-bold)">Budget</th>
+           <th style="text-align:right;padding:0 0 7px;font-weight:var(--fw-bold)">Actual</th>
+           <th style="text-align:right;padding:0 0 7px;font-weight:var(--fw-bold)">Gain/Loss</th>
+           <th style="text-align:right;padding:0 0 7px 8px;font-weight:var(--fw-bold)">%</th></tr></thead>
          <tbody>${p.costCodes.slice().sort((a,b)=>b.revBudget-a.revBudget).slice(0,6).map(c=>`<tr style="border-top:1px solid var(--line2)">
-           <td style="padding:7px 0;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span class="catb ${c.cat}" style="margin-right:5px">${c.cat}</span><span style="font-weight:600">${c.desc}</span></td>
+           <td style="padding:7px 0;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span class="catb ${c.cat}" style="margin-right:5px">${c.cat}</span><span style="font-weight:var(--fw-normal)">${c.desc}</span></td>
            <td style="text-align:right;font-variant-numeric:tabular-nums" class="num">${money(c.revBudget)}</td>
            <td style="text-align:right;font-variant-numeric:tabular-nums" class="num">${money(c.actual)}</td>
-           <td style="text-align:right;font-variant-numeric:tabular-nums;font-weight:600;color:${c.glProj>=0?'var(--success)':'var(--red)'}">${c.glProj>=0?'+':''}${money(c.glProj)}</td>
-           <td style="text-align:right;padding-left:8px;font-weight:700" class="num">${Math.round(c.pct)}%</td></tr>`).join('')}</tbody></table>
+           <td style="text-align:right;font-variant-numeric:tabular-nums;font-weight:var(--fw-normal);color:${c.glProj>=0?'var(--success)':'var(--red)'}">${c.glProj>=0?'+':''}${money(c.glProj)}</td>
+           <td style="text-align:right;padding-left:8px;font-weight:var(--fw-bold)" class="num">${Math.round(c.pct)}%</td></tr>`).join('')}</tbody></table>
        <button class="btn" style="width:100%;justify-content:center;margin-top:12px" onclick="openCost('${p.pid}')">${ic('receipt',15)} View full cost report</button></div>
      <div class="dr-sec"><h4>Team</h4>
        <div class="dr-line"><span class="k">Project manager</span><span class="v">${personTag(p.pm)}</span></div>
@@ -1071,7 +1040,7 @@ function openImport(){
    <div class="im-card">
      <div class="im-head"><div><h3>Import Projects</h3><p>Upload an Excel or CSV file to add your own projects and details.</p></div>
        <button class="dr-close" id="imClose" style="background:rgba(3,27,82,.06);color:var(--navy)">${ic('x')}</button></div>
-     <div class="im-drop" id="imDrop">${ic('upload',28)}<div class="im-dt">Drag &amp; drop your Excel or CSV file here</div><div class="im-ds">or <span style="color:var(--navy);font-weight:700;text-decoration:underline">browse files</span> · .xlsx, .xls, .csv, .tsv accepted</div>
+     <div class="im-drop" id="imDrop">${ic('upload',28)}<div class="im-dt">Drag &amp; drop your Excel or CSV file here</div><div class="im-ds">or <span style="color:var(--navy);font-weight:var(--fw-bold);text-decoration:underline">browse files</span> · .xlsx, .xls, .csv, .tsv accepted</div>
        <input type="file" id="imFile" accept=".csv,.tsv,.txt,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" hidden></div>
      <div id="imResult"></div>
      <div class="im-foot">
